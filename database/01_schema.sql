@@ -1,35 +1,44 @@
--- 1. TABLAS DE CATALOGO --
+-- 1. CREACIÓN DE SECUENCIAS (PARA BATCH) --
+
+CREATE SEQUENCE user_seq START WITH 100 INCREMENT BY 50;
+CREATE SEQUENCE account_seq START WITH 100 INCREMENT BY 50;
+CREATE SEQUENCE transaction_seq START WITH 100 INCREMENT BY 50;
+CREATE SEQUENCE audit_seq START WITH 100 INCREMENT BY 50;
+CREATE SEQUENCE beneficiary_seq START WITH 100 INCREMENT BY 50;
+CREATE SEQUENCE login_attempt_seq START WITH 100 INCREMENT BY 50;
+
+-- 2. TABLAS DE CATALOGO --
 
 CREATE TABLE role (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE currency (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     code VARCHAR(3) NOT NULL UNIQUE,
     name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE transaction_type (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE transaction_status (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     name VARCHAR(20) NOT NULL UNIQUE
 );
 
 CREATE TABLE account_type (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
--- 2. TABLAS PRINCIPALES --
+-- 3. TABLAS PRINCIPALES --
 
 CREATE TABLE "user" (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     role_id INT NOT NULL REFERENCES role(id),
     name VARCHAR(100) NOT NULL,
     last_name1 VARCHAR(100) NOT NULL,
@@ -44,7 +53,7 @@ CREATE TABLE "user" (
 );
 
 CREATE TABLE login_attempt (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     user_id INT UNIQUE REFERENCES "user"(id),
     attempts INT DEFAULT 0,
     last_attempt TIMESTAMP,
@@ -52,7 +61,7 @@ CREATE TABLE login_attempt (
 );
 
 CREATE TABLE audit_log (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     user_id INT REFERENCES "user"(id),
     action VARCHAR(50) NOT NULL,
     description VARCHAR(255),
@@ -61,7 +70,7 @@ CREATE TABLE audit_log (
 );
 
 CREATE TABLE bank_account (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     user_id INT NOT NULL REFERENCES "user"(id),
     account_type_id INT NOT NULL REFERENCES account_type(id),
     account_number VARCHAR(20) NOT NULL UNIQUE,
@@ -72,7 +81,7 @@ CREATE TABLE bank_account (
 );
 
 CREATE TABLE beneficiary (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     user_id INT NOT NULL REFERENCES "user"(id),
     alias VARCHAR(100),
     account_number VARCHAR(20) NOT NULL,
@@ -81,7 +90,7 @@ CREATE TABLE beneficiary (
 );
 
 CREATE TABLE bank_transaction (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id INT PRIMARY KEY,
     source_account_id INT REFERENCES bank_account(id),
     target_account_id INT REFERENCES bank_account(id),
     transaction_type_id INT NOT NULL REFERENCES transaction_type(id),
