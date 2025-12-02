@@ -1,4 +1,7 @@
 package com.example.bank_app.repository;
 
-public class BeneficiaryRepository {
+import com.example.bank_app.model.Beneficiary;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BeneficiaryRepository extends JpaRepository<Beneficiary, Integer> {
 }

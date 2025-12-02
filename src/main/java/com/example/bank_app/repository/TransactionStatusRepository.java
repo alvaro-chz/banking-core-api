@@ -1,4 +1,7 @@
 package com.example.bank_app.repository;
 
-public class TransactionStatusRepository {
+import com.example.bank_app.model.TransactionStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TransactionStatusRepository extends JpaRepository<TransactionStatus, Integer> {
 }
