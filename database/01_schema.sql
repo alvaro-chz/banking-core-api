@@ -46,8 +46,8 @@ CREATE TABLE "user" (
     document_id VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(20),
-    state BOOLEAN DEFAULT TRUE, -- TRUE: Activo, FALSE: Bloqueado
+    phone_number VARCHAR(20) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE, -- TRUE: Activo, FALSE: Bloqueado
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -77,7 +77,7 @@ CREATE TABLE bank_account (
     currency_id INT NOT NULL REFERENCES currency(id),
     current_balance DECIMAL(19,4) NOT NULL DEFAULT 0.0000,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    state BOOLEAN DEFAULT TRUE
+    is_active BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE beneficiary (
