@@ -44,6 +44,7 @@ public class BankAccount {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "is_active")
     @Builder.Default
-    private Boolean state = true;
+    private Boolean isActive = true;
 }
