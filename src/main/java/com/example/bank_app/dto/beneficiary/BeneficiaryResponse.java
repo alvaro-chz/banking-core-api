@@ -1,4 +1,4 @@
-package com.example.bank_app.dto.contact;
+package com.example.bank_app.dto.beneficiary;
 
 public record BeneficiaryResponse(
         Integer id,

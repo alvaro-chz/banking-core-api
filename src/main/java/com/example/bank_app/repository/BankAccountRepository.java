@@ -7,4 +7,5 @@ import java.util.List;
 public interface BankAccountRepository extends JpaRepository<BankAccount, Integer> {
     List<BankAccount> findAllByUserId(Integer userId);
     boolean existsByAccountNumber(String accountNumber);
+    boolean existsByAccountNumberAndUserId(String accountNumber, Integer userId);
 }

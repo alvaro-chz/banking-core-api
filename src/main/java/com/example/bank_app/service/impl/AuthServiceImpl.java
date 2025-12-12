@@ -1,5 +1,6 @@
 package com.example.bank_app.service.impl;
 
+import com.example.bank_app.dto.account.AccountCreationRequest;
 import com.example.bank_app.dto.auth.AuthResponse;
 import com.example.bank_app.dto.auth.LoginRequest;
 import com.example.bank_app.dto.auth.RegisterRequest;
@@ -7,20 +8,25 @@ import com.example.bank_app.model.Role;
 import com.example.bank_app.model.User;
 import com.example.bank_app.repository.RoleRepository;
 import com.example.bank_app.repository.UserRepository;
+import com.example.bank_app.service.AccountService;
 import com.example.bank_app.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 // TODO: Encriptar password (JWT)
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final AccountService accountService;
 
     @Override
+    @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -64,7 +70,10 @@ public class AuthServiceImpl implements AuthService {
 
         User saved = userRepository.save(user);
 
-        // TODO: Aquí deberíamos crear la Cuenta Bancaria inicial (Lo haremos en el siguiente paso)
+        accountService.createAccount(new AccountCreationRequest(
+                "PEN",
+                "CORRIENTE"
+        ), saved);
 
         return new AuthResponse(
                 saved.getId(),

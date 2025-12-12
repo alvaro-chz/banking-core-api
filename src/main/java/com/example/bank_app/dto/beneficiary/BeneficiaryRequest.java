@@ -1,4 +1,4 @@
-package com.example.bank_app.dto.contact;
+package com.example.bank_app.dto.beneficiary;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

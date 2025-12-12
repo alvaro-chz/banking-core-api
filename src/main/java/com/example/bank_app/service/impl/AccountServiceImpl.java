@@ -13,11 +13,14 @@ import com.example.bank_app.repository.UserRepository;
 import com.example.bank_app.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.security.SecureRandom;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AccountServiceImpl implements AccountService {
     private final AccountTypeRepository accountTypeRepository;
     private final BankAccountRepository bankAccountRepository;
@@ -25,6 +28,7 @@ public class AccountServiceImpl implements AccountService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<AccountResponse> getAccountsByUserId(Integer userId) {
         return bankAccountRepository.findAllByUserId(userId)
                 .stream()
@@ -38,11 +42,15 @@ public class AccountServiceImpl implements AccountService {
                 .toList();
     }
 
-    @Override
     public AccountResponse createAccount(AccountCreationRequest request, Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
+        return createAccount(request, user);
+    }
+
+    @Override
+    public AccountResponse createAccount(AccountCreationRequest request, User user) {
         Currency currency = currencyRepository.findByCode(request.currency())
                 .orElseThrow(() -> new RuntimeException("Código de moneda no encontrada en la base de datos."));
 
