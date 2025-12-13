@@ -1,7 +1,8 @@
 package com.example.bank_app.controller;
 
-import com.example.bank_app.dto.beneficiary.BeneficiaryRequest;
+import com.example.bank_app.dto.beneficiary.BeneficiaryCreateRequest;
 import com.example.bank_app.dto.beneficiary.BeneficiaryResponse;
+import com.example.bank_app.dto.beneficiary.BeneficiaryUpdateRequest;
 import com.example.bank_app.service.BeneficiaryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +24,12 @@ public class BeneficiaryController {
     }
 
     @PostMapping("/user/{id}")
-    public ResponseEntity<BeneficiaryResponse> add(@RequestBody @Valid BeneficiaryRequest request, @PathVariable Integer id) {
+    public ResponseEntity<BeneficiaryResponse> add(@RequestBody @Valid BeneficiaryCreateRequest request, @PathVariable Integer id) {
         return new ResponseEntity<>(beneficiaryService.addBeneficiary(request, id), HttpStatus.CREATED);
     }
 
     @PutMapping("/user/{userId}/{id}")
-    public ResponseEntity<BeneficiaryResponse> update(@RequestBody @Valid BeneficiaryRequest request, @PathVariable Integer id, @PathVariable Integer userId) {
+    public ResponseEntity<BeneficiaryResponse> update(@RequestBody @Valid BeneficiaryUpdateRequest request, @PathVariable Integer id, @PathVariable Integer userId) {
         return ResponseEntity.ok(beneficiaryService.updateBeneficiary(request, id, userId));
     }
 

@@ -2,7 +2,8 @@ package com.example.bank_app.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 
 public class LoginAttempt {
     @Id
@@ -27,7 +29,7 @@ public class LoginAttempt {
     @Builder.Default
     private Integer attempts = 0;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(name = "last_attempt")
     private LocalDateTime lastAttempt;
 

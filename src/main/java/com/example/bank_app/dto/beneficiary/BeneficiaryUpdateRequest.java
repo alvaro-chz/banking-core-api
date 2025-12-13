@@ -1,10 +1,8 @@
 package com.example.bank_app.dto.beneficiary;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record BeneficiaryRequest(
-    @NotBlank(message = "El número de cuenta es obligatorio")
+public record BeneficiaryUpdateRequest(
     String accountNumber,
 
     @Size(max = 100, message = "El nombre del banco no debe exceder los 100 caracteres")
