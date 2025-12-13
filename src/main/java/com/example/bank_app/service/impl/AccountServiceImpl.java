@@ -30,7 +30,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional(readOnly = true)
     public List<AccountResponse> getAccountsByUserId(Integer userId) {
-        return bankAccountRepository.findAllByUserId(userId)
+        return bankAccountRepository.findAllByUserIdAndIsActiveTrue(userId)
                 .stream()
                 .map(bankAccount -> new AccountResponse(
                         bankAccount.getId(),
