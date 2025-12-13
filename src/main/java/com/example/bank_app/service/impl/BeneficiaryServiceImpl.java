@@ -1,7 +1,8 @@
 package com.example.bank_app.service.impl;
 
-import com.example.bank_app.dto.beneficiary.BeneficiaryRequest;
+import com.example.bank_app.dto.beneficiary.BeneficiaryCreateRequest;
 import com.example.bank_app.dto.beneficiary.BeneficiaryResponse;
+import com.example.bank_app.dto.beneficiary.BeneficiaryUpdateRequest;
 import com.example.bank_app.model.Beneficiary;
 import com.example.bank_app.model.User;
 import com.example.bank_app.repository.BankAccountRepository;
@@ -32,20 +33,22 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     }
 
     @Override
-    public BeneficiaryResponse addBeneficiary(BeneficiaryRequest request, Integer userId) {
+    public BeneficiaryResponse addBeneficiary(BeneficiaryCreateRequest request, Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario con ID: " + userId + " no encontrado"));
 
         validateBeneficiaryRules(userId, request.accountNumber());
 
-        Beneficiary beneficiary = Beneficiary.builder()
+        var beneficiary = Beneficiary.builder()
                 .user(user)
                 .accountNumber(request.accountNumber())
-                .bankName(request.bankName())
-                .alias(request.alias())
-                .build();
+                .alias(request.alias());
 
-        Beneficiary saved = beneficiaryRepository.save(beneficiary);
+        if (request.bankName() != null && !request.bankName().isBlank()) {
+            beneficiary.bankName(request.bankName());
+        }
+
+        Beneficiary saved = beneficiaryRepository.save(beneficiary.build());
 
         return mapToBeneficiaryResponse(saved);
     }
@@ -58,7 +61,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     }
 
     @Override
-    public BeneficiaryResponse updateBeneficiary(BeneficiaryRequest request, Integer beneficiaryId, Integer userId) {
+    public BeneficiaryResponse updateBeneficiary(BeneficiaryUpdateRequest request, Integer beneficiaryId, Integer userId) {
         Beneficiary beneficiary = getBeneficiaryAndValidateOwnership(beneficiaryId, userId);
 
         if (request.accountNumber() != null && !request.accountNumber().isBlank()) {
