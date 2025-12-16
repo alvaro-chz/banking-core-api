@@ -7,7 +7,6 @@ import com.example.bank_app.model.User;
 import com.example.bank_app.repository.UserRepository;
 import com.example.bank_app.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponse updateUser(UserUpdateRequest request, Integer userId) {
@@ -45,7 +43,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario con ID: " + userId + ", no encontrado."));
 
-        if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
+        if (!user.getPassword().equals(request.currentPassword())) {
             throw new RuntimeException("La contraseña actual es incorrecta");
         }
 
@@ -53,11 +51,11 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("La nueva contraseña y la confirmación no coinciden.");
         }
 
-        if (passwordEncoder.matches(request.newPassword(), user.getPassword())) {
+        if (user.getPassword().equals(request.newPassword())) {
             throw new RuntimeException("La nueva contraseña no puede ser igual a la actual.");
         }
 
-        user.setPassword(passwordEncoder.encode(request.newPassword()));
+        user.setPassword(request.newPassword());
     }
 
     @Override
