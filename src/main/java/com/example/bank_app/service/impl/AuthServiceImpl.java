@@ -1,5 +1,6 @@
 package com.example.bank_app.service.impl;
 
+import com.example.bank_app.config.JwtService;
 import com.example.bank_app.dto.account.AccountCreationRequest;
 import com.example.bank_app.dto.auth.AuthResponse;
 import com.example.bank_app.dto.auth.LoginRequest;
@@ -11,10 +12,11 @@ import com.example.bank_app.repository.UserRepository;
 import com.example.bank_app.service.AccountService;
 import com.example.bank_app.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-// TODO: Encriptar password (JWT)
 
 @Service
 @RequiredArgsConstructor
@@ -24,23 +26,26 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final AccountService accountService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (!user.getPassword().equals(request.password())) {
-            throw new RuntimeException("Credenciales inválidas");
-        }
+        String jwtToken = jwtService.generateToken(user);
 
         return new AuthResponse(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getRole().getName(),
-                String.valueOf(user.getPassword().hashCode())
+                jwtToken
         );
     }
 
@@ -54,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("El DNI ya está registrado");
         }
 
-        Role defaultRole = roleRepository.findById(2) // Cliente
+        Role defaultRole = roleRepository.findByName("CLIENT")
                 .orElseThrow(() -> new RuntimeException("Error: Rol por defecto no encontrado en BD"));
 
         User user = User.builder()
@@ -63,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
                 .lastName2(request.lastName2())
                 .documentId(request.documentId())
                 .email(request.email())
-                .password(request.password())
+                .password(passwordEncoder.encode(request.password()))
                 .phoneNumber(request.phoneNumber())
                 .role(defaultRole)
                 .build();
@@ -75,12 +80,14 @@ public class AuthServiceImpl implements AuthService {
                 "CORRIENTE"
         ), saved);
 
+        String jwtToken = jwtService.generateToken(saved);
+
         return new AuthResponse(
                 saved.getId(),
                 saved.getName(),
                 saved.getEmail(),
                 saved.getRole().getName(),
-                String.valueOf(saved.getPassword().hashCode())
+                jwtToken
         );
     }
 }
