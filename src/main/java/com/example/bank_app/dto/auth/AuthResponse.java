@@ -1,7 +1,7 @@
 package com.example.bank_app.dto.auth;
 
 public record AuthResponse(
-        Integer id,
+        Long id,
         String name,
         String email,
         String role,

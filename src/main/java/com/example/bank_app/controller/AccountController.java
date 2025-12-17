@@ -18,12 +18,12 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<AccountResponse>> getAccounts(@PathVariable Integer id) {
+    public ResponseEntity<List<AccountResponse>> getAccounts(@PathVariable Long id) {
         return ResponseEntity.ok(accountService.getAccountsByUserId(id));
     }
 
     @PostMapping("/user/{id}")
-    public ResponseEntity<AccountResponse> create(@RequestBody @Valid AccountCreationRequest request, @PathVariable Integer id) {
+    public ResponseEntity<AccountResponse> create(@RequestBody @Valid AccountCreationRequest request, @PathVariable Long id) {
         return new ResponseEntity<>(accountService.createAccount(request, id), HttpStatus.CREATED);
     }
 }

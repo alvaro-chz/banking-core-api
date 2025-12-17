@@ -38,7 +38,7 @@ CREATE TABLE account_type (
 -- 3. TABLAS PRINCIPALES --
 
 CREATE TABLE "user" (
-    id INT PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     role_id INT NOT NULL REFERENCES role(id),
     name VARCHAR(100) NOT NULL,
     last_name1 VARCHAR(100) NOT NULL,
@@ -53,16 +53,16 @@ CREATE TABLE "user" (
 );
 
 CREATE TABLE login_attempt (
-    id INT PRIMARY KEY,
-    user_id INT UNIQUE REFERENCES "user"(id),
+    id BIGINT PRIMARY KEY,
+    user_id BIGINT UNIQUE REFERENCES "user"(id),
     attempts INT DEFAULT 0,
     last_attempt TIMESTAMP,
     is_blocked BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE audit_log (
-    id INT PRIMARY KEY,
-    user_id INT REFERENCES "user"(id),
+    id BIGINT PRIMARY KEY,
+    user_id BIGINT REFERENCES "user"(id),
     action VARCHAR(50) NOT NULL,
     description VARCHAR(255),
     ip_address VARCHAR(45),
@@ -70,8 +70,8 @@ CREATE TABLE audit_log (
 );
 
 CREATE TABLE bank_account (
-    id INT PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES "user"(id),
+    id BIGINT PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES "user"(id),
     account_type_id INT NOT NULL REFERENCES account_type(id),
     account_number VARCHAR(20) NOT NULL UNIQUE,
     currency_id INT NOT NULL REFERENCES currency(id),
@@ -81,8 +81,8 @@ CREATE TABLE bank_account (
 );
 
 CREATE TABLE beneficiary (
-    id INT PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES "user"(id),
+    id BIGINT PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES "user"(id),
     alias VARCHAR(100),
     account_number VARCHAR(20) NOT NULL,
     bank_name VARCHAR(100) DEFAULT 'BankDemo',
@@ -90,9 +90,9 @@ CREATE TABLE beneficiary (
 );
 
 CREATE TABLE bank_transaction (
-    id INT PRIMARY KEY,
-    source_account_id INT REFERENCES bank_account(id),
-    target_account_id INT REFERENCES bank_account(id),
+    id BIGINT PRIMARY KEY,
+    source_account_id BIGINT REFERENCES bank_account(id),
+    target_account_id BIGINT REFERENCES bank_account(id),
     transaction_type_id INT NOT NULL REFERENCES transaction_type(id),
     amount DECIMAL(19,4) NOT NULL,
     currency_id INT NOT NULL REFERENCES currency(id),

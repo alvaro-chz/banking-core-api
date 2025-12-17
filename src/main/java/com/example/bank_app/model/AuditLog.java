@@ -21,7 +21,7 @@ public class AuditLog {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "audit_seq_gen")
     @SequenceGenerator(name = "audit_seq_gen", sequenceName = "audit_seq")
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

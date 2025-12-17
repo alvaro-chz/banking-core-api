@@ -29,7 +29,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AccountResponse> getAccountsByUserId(Integer userId) {
+    public List<AccountResponse> getAccountsByUserId(Long userId) {
         return bankAccountRepository.findAllByUserIdAndIsActiveTrue(userId)
                 .stream()
                 .map(bankAccount -> new AccountResponse(
@@ -42,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
                 .toList();
     }
 
-    public AccountResponse createAccount(AccountCreationRequest request, Integer userId) {
+    public AccountResponse createAccount(AccountCreationRequest request, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 

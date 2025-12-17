@@ -5,11 +5,11 @@ import com.example.bank_app.dto.transaction.*;
 import java.util.List;
 
 public interface TransactionService {
-    TransactionResponse transfer(TransferRequest request, Integer userId);
+    TransactionResponse transfer(TransferRequest request, Long userId);
     TransactionResponse deposit(DepositRequest request);
-    TransactionResponse withdraw(WithdrawRequest request, Integer userId);
-    TransactionResponse payService(PayServiceRequest request, Integer userId);
+    TransactionResponse withdraw(WithdrawRequest request, Long userId);
+    TransactionResponse payService(PayServiceRequest request, Long userId);
     TransactionResponse payInterest(PayInterestRequest request);
 
-    List<TransactionResponse> getHistory(String accountNumber, Integer userId);
+    List<TransactionResponse> getHistory(String accountNumber, Long userId);
 }

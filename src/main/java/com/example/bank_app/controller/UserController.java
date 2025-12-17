@@ -16,18 +16,18 @@ public class UserController {
     private final UserService userService;
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> update(@RequestBody @Valid UserUpdateRequest request, @PathVariable Integer id) {
+    public ResponseEntity<UserResponse> update(@RequestBody @Valid UserUpdateRequest request, @PathVariable Long id) {
         return ResponseEntity.ok(userService.updateUser(request, id));
     }
 
     @PatchMapping("/{id}/password")
-    public ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordRequest request, @PathVariable Integer id) {
+    public ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordRequest request, @PathVariable Long id) {
         userService.changePassword(request, id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getProfile(@PathVariable Integer id) {
+    public ResponseEntity<UserResponse> getProfile(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserProfile(id));
     }
 }

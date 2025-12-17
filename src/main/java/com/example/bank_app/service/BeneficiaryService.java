@@ -7,8 +7,8 @@ import com.example.bank_app.dto.beneficiary.BeneficiaryUpdateRequest;
 import java.util.List;
 
 public interface BeneficiaryService {
-    List<BeneficiaryResponse> getBeneficiaries(Integer userId);
-    BeneficiaryResponse addBeneficiary(BeneficiaryCreateRequest request, Integer userId);
-    BeneficiaryResponse updateBeneficiary(BeneficiaryUpdateRequest request, Integer beneficiaryId, Integer userId);
-    void deleteBeneficiary (Integer beneficiaryId, Integer userId);
+    List<BeneficiaryResponse> getBeneficiaries(Long userId);
+    BeneficiaryResponse addBeneficiary(BeneficiaryCreateRequest request, Long userId);
+    BeneficiaryResponse updateBeneficiary(BeneficiaryUpdateRequest request, Long beneficiaryId, Long userId);
+    void deleteBeneficiary (Long beneficiaryId, Long userId);
 }
