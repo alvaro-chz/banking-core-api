@@ -3,7 +3,7 @@ package com.example.bank_app.dto.user;
 import java.time.LocalDateTime;
 
 public record UserResponse(
-    Integer id,
+    Long id,
     String name,
     String lastName1,
     String lastName2,

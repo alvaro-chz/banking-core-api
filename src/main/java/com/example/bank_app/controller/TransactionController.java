@@ -17,7 +17,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping("/user/{id}/transfer")
-    public ResponseEntity<TransactionResponse> transfer(@RequestBody @Valid TransferRequest request, @PathVariable Integer id) {
+    public ResponseEntity<TransactionResponse> transfer(@RequestBody @Valid TransferRequest request, @PathVariable Long id) {
         return new ResponseEntity<>(transactionService.transfer(request, id), HttpStatus.CREATED);
     }
 
@@ -27,17 +27,17 @@ public class TransactionController {
     }
 
     @PostMapping("/user/{id}/withdraw")
-    public ResponseEntity<TransactionResponse> withdraw(@RequestBody @Valid WithdrawRequest request, @PathVariable Integer id) {
+    public ResponseEntity<TransactionResponse> withdraw(@RequestBody @Valid WithdrawRequest request, @PathVariable Long id) {
         return new ResponseEntity<>(transactionService.withdraw(request, id), HttpStatus.CREATED);
     }
 
     @PostMapping("/user/{id}/payment")
-    public ResponseEntity<TransactionResponse> payService(@RequestBody @Valid PayServiceRequest request, @PathVariable Integer id) {
+    public ResponseEntity<TransactionResponse> payService(@RequestBody @Valid PayServiceRequest request, @PathVariable Long id) {
         return new ResponseEntity<>(transactionService.payService(request, id), HttpStatus.CREATED);
     }
 
     @GetMapping("/history/account/{accountNumber}")
-    public ResponseEntity<List<TransactionResponse>> getHistory(@PathVariable String accountNumber, @RequestParam Integer userId) {
+    public ResponseEntity<List<TransactionResponse>> getHistory(@PathVariable String accountNumber, @RequestParam Long userId) {
         return ResponseEntity.ok(transactionService.getHistory(accountNumber, userId));
     }
 }

@@ -7,7 +7,7 @@ import com.example.bank_app.model.User;
 import java.util.List;
 
 public interface AccountService {
-    List<AccountResponse> getAccountsByUserId(Integer userId);
-    AccountResponse createAccount(AccountCreationRequest request, Integer userId);
+    List<AccountResponse> getAccountsByUserId(Long userId);
+    AccountResponse createAccount(AccountCreationRequest request, Long userId);
     AccountResponse createAccount(AccountCreationRequest request, User user);
 }

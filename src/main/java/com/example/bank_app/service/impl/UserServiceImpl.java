@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserResponse updateUser(UserUpdateRequest request, Integer userId) {
+    public UserResponse updateUser(UserUpdateRequest request, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario con ID: " + userId + ", no encontrado."));
 
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(ChangePasswordRequest request, Integer userId) {
+    public void changePassword(ChangePasswordRequest request, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario con ID: " + userId + ", no encontrado."));
 
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponse getUserProfile(Integer userId) {
+    public UserResponse getUserProfile(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario con ID: " + userId + ", no encontrado."));
 

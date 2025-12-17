@@ -25,7 +25,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BeneficiaryResponse> getBeneficiaries(Integer userId) {
+    public List<BeneficiaryResponse> getBeneficiaries(Long userId) {
         return beneficiaryRepository.findAllByUserIdAndIsActiveTrue(userId)
                 .stream()
                 .map(this::mapToBeneficiaryResponse)
@@ -33,7 +33,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     }
 
     @Override
-    public BeneficiaryResponse addBeneficiary(BeneficiaryCreateRequest request, Integer userId) {
+    public BeneficiaryResponse addBeneficiary(BeneficiaryCreateRequest request, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario con ID: " + userId + " no encontrado"));
 
@@ -54,14 +54,14 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     }
 
     @Override
-    public void deleteBeneficiary(Integer beneficiaryId, Integer userId) {
+    public void deleteBeneficiary(Long beneficiaryId, Long userId) {
         Beneficiary beneficiary = getBeneficiaryAndValidateOwnership(beneficiaryId, userId);
 
         beneficiary.setIsActive(false);
     }
 
     @Override
-    public BeneficiaryResponse updateBeneficiary(BeneficiaryUpdateRequest request, Integer beneficiaryId, Integer userId) {
+    public BeneficiaryResponse updateBeneficiary(BeneficiaryUpdateRequest request, Long beneficiaryId, Long userId) {
         Beneficiary beneficiary = getBeneficiaryAndValidateOwnership(beneficiaryId, userId);
 
         if (request.accountNumber() != null && !request.accountNumber().isBlank()) {
@@ -91,7 +91,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     // Métodos privados
 
-    private Beneficiary getBeneficiaryAndValidateOwnership(Integer beneficiaryId, Integer userId) {
+    private Beneficiary getBeneficiaryAndValidateOwnership(Long beneficiaryId, Long userId) {
         Beneficiary beneficiary = beneficiaryRepository.findById(beneficiaryId)
                 .orElseThrow(() -> new RuntimeException("Beneficiario no encontrado"));
 
@@ -106,7 +106,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return beneficiary;
     }
 
-    private void validateBeneficiaryRules(Integer userId, String accountNumber) {
+    private void validateBeneficiaryRules(Long userId, String accountNumber) {
         if (beneficiaryRepository.existsByUserIdAndAccountNumberAndIsActiveTrue(userId, accountNumber)) {
             throw new RuntimeException("Esta cuenta ya está agregada a tus beneficiarios.");
         }

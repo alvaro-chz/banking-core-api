@@ -20,7 +20,7 @@ public class LoginAttempt {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "login_attempt_seq_gen")
     @SequenceGenerator(name = "login_attempt_seq_gen", sequenceName = "login_attempt_seq")
-    private Integer id;
+    private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", unique = true)

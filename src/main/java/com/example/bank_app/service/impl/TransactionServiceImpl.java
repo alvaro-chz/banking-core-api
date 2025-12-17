@@ -25,7 +25,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final BankTransactionRepository bankTransactionRepository;
 
     @Override
-    public TransactionResponse transfer(TransferRequest request, Integer userId) {
+    public TransactionResponse transfer(TransferRequest request, Long userId) {
         BankAccount sourceAccount = bankAccountRepository.findByAccountNumberAndIsActiveTrue(request.sourceAccount())
                 .orElseThrow(() -> new RuntimeException("Cuenta origen no disponible"));
 
@@ -119,7 +119,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionResponse withdraw(WithdrawRequest request, Integer userId) {
+    public TransactionResponse withdraw(WithdrawRequest request, Long userId) {
         BankAccount sourceAccount = bankAccountRepository.findByAccountNumberAndIsActiveTrue(request.sourceAccount())
                 .orElseThrow(() -> new RuntimeException("Cuenta origen no disponible"));
 
@@ -165,7 +165,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionResponse payService(PayServiceRequest request, Integer userId) {
+    public TransactionResponse payService(PayServiceRequest request, Long userId) {
         BankAccount sourceAccount = bankAccountRepository.findByAccountNumberAndIsActiveTrue(request.sourceAccount())
                 .orElseThrow(() -> new RuntimeException("Cuenta origen no disponible"));
 
@@ -255,7 +255,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionResponse> getHistory(String accountNumber, Integer userId) {
+    public List<TransactionResponse> getHistory(String accountNumber, Long userId) {
         BankAccount account = bankAccountRepository.findByAccountNumberAndIsActiveTrue(accountNumber)
                 .orElseThrow(() -> new RuntimeException("Cuenta origen no disponible"));
 

@@ -19,22 +19,22 @@ public class BeneficiaryController {
     private final BeneficiaryService beneficiaryService;
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<BeneficiaryResponse>> getAll(@PathVariable Integer id) {
+    public ResponseEntity<List<BeneficiaryResponse>> getAll(@PathVariable Long id) {
         return ResponseEntity.ok(beneficiaryService.getBeneficiaries(id));
     }
 
     @PostMapping("/user/{id}")
-    public ResponseEntity<BeneficiaryResponse> add(@RequestBody @Valid BeneficiaryCreateRequest request, @PathVariable Integer id) {
+    public ResponseEntity<BeneficiaryResponse> add(@RequestBody @Valid BeneficiaryCreateRequest request, @PathVariable Long id) {
         return new ResponseEntity<>(beneficiaryService.addBeneficiary(request, id), HttpStatus.CREATED);
     }
 
     @PutMapping("/user/{userId}/{id}")
-    public ResponseEntity<BeneficiaryResponse> update(@RequestBody @Valid BeneficiaryUpdateRequest request, @PathVariable Integer id, @PathVariable Integer userId) {
+    public ResponseEntity<BeneficiaryResponse> update(@RequestBody @Valid BeneficiaryUpdateRequest request, @PathVariable Long id, @PathVariable Long userId) {
         return ResponseEntity.ok(beneficiaryService.updateBeneficiary(request, id, userId));
     }
 
     @DeleteMapping("/user/{userId}/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id, @PathVariable Integer userId) {
+    public ResponseEntity<Void> delete(@PathVariable Long id, @PathVariable Long userId) {
         beneficiaryService.deleteBeneficiary(id, userId);
         return ResponseEntity.ok().build();
     }
