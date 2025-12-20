@@ -21,4 +21,4 @@ INSERT INTO transaction_type (id, name) VALUES (1, 'TRANSFERENCIA');
 INSERT INTO transaction_type (id, name) VALUES (2, 'DEPOSITO');
 INSERT INTO transaction_type (id, name) VALUES (3, 'RETIRO');
 INSERT INTO transaction_type (id, name) VALUES (4, 'PAGO_SERVICIO');
-INSERT INTO transaction_type (id, name) VALUES (5, 'PAGO_INTERESES'); -- Vital para tu Batch
+INSERT INTO transaction_type (id, name) VALUES (5, 'PAGO_INTERESES');
