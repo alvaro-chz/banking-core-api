@@ -1,48 +1,82 @@
 package com.example.bank_app.service.impl;
 
+import com.example.bank_app.dto.external.ExchangeRateResponse;
 import com.example.bank_app.service.CurrencyExchangeService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class CurrencyExchangeServiceImpl implements CurrencyExchangeService {
-    // Tasas hardcodeadas respecto a 1 USD (Base)
-    private static final Map<String, BigDecimal> EXCHANGE_RATES = Map.of(
-            "USD", new BigDecimal("1.00"),
-            "PEN", new BigDecimal("3.37"),  // 1 USD = 3.75 Soles
-            "MXN", new BigDecimal("18.02")  // 1 USD = 18.02 Pesos
-    );
+
+    private final WebClient webClient;
+    @Value("${openexchangerates.api.key}")
+    private String apiKey;
 
     @Override
     public BigDecimal convert(BigDecimal amount, String fromCurrency, String toCurrency) {
-        // 1. Si son la misma moneda, devolvemos el mismo monto
         if (fromCurrency.equals(toCurrency)) {
             return amount;
         }
 
-        // 2. Validar soporte de monedas
-        if (!EXCHANGE_RATES.containsKey(fromCurrency) || !EXCHANGE_RATES.containsKey(toCurrency)) {
-            throw new RuntimeException("Moneda no soportada para conversión: " + fromCurrency + " -> " + toCurrency);
+        Map<String, BigDecimal> rates;
+
+        if (fromCurrency.equals("USD")) {
+            rates = getExchangeRateFromApi(fromCurrency, toCurrency);
+
+            if (!rates.containsKey(toCurrency)) throw new RuntimeException("Tasa no encontrada para: " + toCurrency);
+
+            return amount.multiply(rates.get(toCurrency)).setScale(4, RoundingMode.HALF_UP);
         }
 
-        BigDecimal rateFrom = EXCHANGE_RATES.get(fromCurrency);
-        BigDecimal rateTo = EXCHANGE_RATES.get(toCurrency);
+        if (toCurrency.equals("USD")) {
+            rates = getExchangeRateFromApi(toCurrency, fromCurrency);
 
-        // 3. Lógica de Conversión (Pivote en USD)
-        // Fórmula: (Monto / TasaOrigen) * TasaDestino
+            if (!rates.containsKey(fromCurrency)) throw new RuntimeException("Tasa no encontrada para: " + fromCurrency);
 
-        // Paso A: Convertir a USD (Base)
-        // MathContext.DECIMAL128 para evitar errores de división infinita (ej. 1/3)
-        BigDecimal amountInUsd = amount.divide(rateFrom, MathContext.DECIMAL128);
+            return amount.divide(rates.get(fromCurrency), 4, RoundingMode.HALF_UP);
+        }
 
-        // Paso B: Convertir de USD a Moneda Destino
-        BigDecimal finalAmount = amountInUsd.multiply(rateTo);
+        rates = getExchangeRateFromApi("USD", fromCurrency, toCurrency);
 
-        // 4. Redondear a 4 decimales
-        return finalAmount.setScale(4, RoundingMode.HALF_UP);
+        if (!rates.containsKey(fromCurrency) || !rates.containsKey(toCurrency)) {
+            throw new RuntimeException("Faltan tasas para realizar la conversión cruzada.");
+        }
+
+        return amount.multiply(rates.get(toCurrency)).divide(rates.get(fromCurrency), 4, RoundingMode.HALF_UP);
+    }
+
+    private Map<String, BigDecimal> getExchangeRateFromApi(String base, String symbol1, String symbol2) {
+        return getExchangeRateFromApi(base, symbol1 + "," + symbol2);
+    }
+
+    private Map<String, BigDecimal> getExchangeRateFromApi(String from, String to) {
+        log.info("Consultando WebClient: {} -> {}", from, to);
+
+        ExchangeRateResponse response = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/latest.json")
+                        .queryParam("app_id", apiKey)
+                        .queryParam("base", from)
+                        .queryParam("symbols", to)
+                        .build())
+                .retrieve()
+                .bodyToMono(ExchangeRateResponse.class)
+                .block();
+
+
+        if (response != null && response.rates() != null && !response.rates().isEmpty()) {
+            return response.rates();
+        }
+
+        throw new RuntimeException("Error obteniendo el tipo de cambio de " + from + " a " + to);
     }
 }
