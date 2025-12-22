@@ -1,5 +1,6 @@
 package com.example.bank_app.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -8,8 +9,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
+@RequiredArgsConstructor
 class CurrencyExchangeServiceImplTest {
-    private final CurrencyExchangeServiceImpl currencyExchangeService = new CurrencyExchangeServiceImpl();
+    private final CurrencyExchangeServiceImpl currencyExchangeService;
 
     // --- Identity logic tests ---
 
