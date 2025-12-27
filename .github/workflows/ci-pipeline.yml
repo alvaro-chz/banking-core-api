@@ -1,0 +1,35 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # GitHub - máquina Linux
+
+    steps:
+      # Descarga código del repositorio
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Instala Java 17 en esa máquina Linux
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # Ejecuta los Tests
+      - name: Build and Test with Maven
+        run: ./mvnw verify
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          EXCHANGE_API_KEY: ${{ secrets.EXCHANGE_API_KEY }}
+          EXCHANGE_API_URL: ${{ secrets.EXCHANGE_API_URL }}
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+          DB_NAME: test_db
