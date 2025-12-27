@@ -5,6 +5,7 @@ services:
     container_name: bank_postgres_container
     image: postgres:16
     restart: always
+    env_file: .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -14,6 +15,25 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./database:/docker-entrypoint-initdb.d
+    networks:
+      - bank-network
 
+  app:
+    container_name: bank_app_backend
+    build: .
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    depends_on:
+      - bank_app_db
+    env_file: .env
+    environment:
+      DB_HOST: bank_app_db
+    networks:
+      - bank-network
 volumes:
   pgdata:
+
+networks:
+  bank-network:
+    driver: bridge
