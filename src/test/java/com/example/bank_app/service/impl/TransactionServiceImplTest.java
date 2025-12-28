@@ -10,6 +10,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -409,17 +413,34 @@ class TransactionServiceImplTest {
                 .amount(BigDecimal.valueOf(1999.00))
                 .build();
 
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<BankTransaction> transactionPage = new PageImpl<>(List.of(transaction));
+
         when(bankAccountRepository.findByAccountNumberAndIsActiveTrue("111111"))
                 .thenReturn(Optional.of(sourceAccount));
-        when(bankTransactionRepository.findAllByAccountId(any()))
-                .thenReturn(List.of(transaction));
+        when(bankTransactionRepository.findAllByAccountId(
+                eq(sourceAccount.getId()),
+                any(), // status
+                any(), // startDate
+                any(), // endDate
+                any(Pageable.class) // pageable
+        )).thenReturn(transactionPage);
 
         // When
-        List<TransactionResponse> result = transactionService.getHistory("111111", 1L);
+        Page<TransactionResponse> result = transactionService.getHistory(
+                "111111",
+                1L,
+                null,
+                null,
+                null,
+                pageable
+        );
 
         // Then
-        TransactionResponse response = result.get(0);
-        assertThat(result).hasSize(1);
+        assertThat(result).isNotNull();
+        assertThat(result.getTotalElements()).isEqualTo(1);
+
+        TransactionResponse response = result.getContent().get(0);
         assertThat(response.sourceAccount()).isEqualTo("111111");
         assertThat(response.targetAccount()).isEqualTo("222222");
         assertThat(response.transactionType()).isEqualTo("TRANSFERENCIA");
@@ -433,11 +454,19 @@ class TransactionServiceImplTest {
 
         when(bankAccountRepository.findByAccountNumberAndIsActiveTrue("111111"))
                 .thenReturn(Optional.of(sourceAccount));
+        Pageable pageable = PageRequest.of(0, 10);
 
         // When & Then
-        assertThatThrownBy(() -> transactionService.getHistory("111111", 99L))
+        assertThatThrownBy(() -> transactionService.getHistory(
+                "111111",
+                        99L,
+                        null,
+                        null,
+                        null,
+                        pageable)
+        )
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("La cuenta origen no te pertenece");
-        verify(bankTransactionRepository, never()).findAllByAccountId(any());
+        verify(bankTransactionRepository, never()).findAllByAccountId(any(), any(), any(), any(), any());
     }
 }

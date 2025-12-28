@@ -6,11 +6,14 @@ import com.example.bank_app.repository.*;
 import com.example.bank_app.service.CurrencyExchangeService;
 import com.example.bank_app.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -255,7 +258,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionResponse> getHistory(String accountNumber, Long userId) {
+    public Page<TransactionResponse> getHistory(
+            String accountNumber,
+            Long userId,
+            String status,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            Pageable pageable
+    ) {
         BankAccount account = bankAccountRepository.findByAccountNumberAndIsActiveTrue(accountNumber)
                 .orElseThrow(() -> new RuntimeException("Cuenta origen no disponible"));
 
@@ -263,10 +273,20 @@ public class TransactionServiceImpl implements TransactionService {
             throw new RuntimeException("La cuenta origen no te pertenece");
         }
 
-        return bankTransactionRepository.findAllByAccountId(account.getId())
-                .stream()
-                .map(this::mapToTransactionResponse)
-                .toList();
+        return bankTransactionRepository.findAllByAccountId(account.getId(), status, startDate, endDate, pageable)
+                .map(this::mapToTransactionResponse);
+    }
+
+    @Override
+    public Page<TransactionResponse> getAllTransactions(
+            Long accountId,
+            String status,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            Pageable pageable
+    ) {
+        return bankTransactionRepository.findAllByFilter(accountId, status, startDate, endDate, pageable)
+                .map(this::mapToTransactionResponse);
     }
 
     // Métodos privados

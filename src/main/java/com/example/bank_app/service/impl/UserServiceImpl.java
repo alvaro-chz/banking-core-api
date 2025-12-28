@@ -1,5 +1,6 @@
 package com.example.bank_app.service.impl;
 
+import com.example.bank_app.dto.admin.UserAdminResponse;
 import com.example.bank_app.dto.user.ChangePasswordRequest;
 import com.example.bank_app.dto.user.UserResponse;
 import com.example.bank_app.dto.user.UserUpdateRequest;
@@ -7,6 +8,8 @@ import com.example.bank_app.model.User;
 import com.example.bank_app.repository.UserRepository;
 import com.example.bank_app.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +70,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("Usuario con ID: " + userId + ", no encontrado."));
 
         return mapToUserResponse(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserAdminResponse> getUsers(String term, Boolean isActive, Boolean isBlocked, Pageable pageable) {
+        return userRepository.findUsersByFilter(term, isActive, isBlocked, pageable);
     }
 
     private UserResponse mapToUserResponse(User user) {

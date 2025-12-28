@@ -235,8 +235,8 @@ class TransactionControllerIT extends AbstractIntegrationTest {
         mockMvc.perform(get("/api/v1/transactions/history/account/{accountNumber}?userId={userId}", sourceAcc.getAccountNumber(),sourceUser.getId())
                     .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].referenceCode").value("REF-2"))
-                .andExpect(jsonPath("$[1].referenceCode").value("REF-1"));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].referenceCode").value("REF-2"))
+                .andExpect(jsonPath("$.content[1].referenceCode").value("REF-1"));
     }
 }

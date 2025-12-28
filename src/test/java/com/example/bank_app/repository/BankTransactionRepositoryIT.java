@@ -6,9 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -128,12 +130,20 @@ class BankTransactionRepositoryIT extends AbstractIntegrationTest {
         // 3. B envía dinero a una cuenta externa (A no participa)
         createTransaction(accountB, null, "REF-3");
 
+        Pageable pageable = PageRequest.of(0, 10);
+
         // When: Buscamos todas las transacciones de A
-        List<BankTransaction> transactionsOfA = bankTransactionRepository.findAllByAccountId(accountA.getId());
+        Page<BankTransaction> transactionsOfA = bankTransactionRepository.findAllByAccountId(
+                accountA.getId(),
+                null,
+                null,
+                null,
+                pageable
+        );
 
         // Then:
-        assertThat(transactionsOfA).hasSize(2);
-        assertThat(transactionsOfA)
+        assertThat(transactionsOfA.getTotalElements()).isEqualTo(2);
+        assertThat(transactionsOfA.getContent())
                 .extracting(BankTransaction::getReferenceCode)
                 .containsExactlyInAnyOrder("REF-1", "REF-2");
     }
