@@ -7,9 +7,11 @@ import com.example.bank_app.dto.auth.LoginRequest;
 import com.example.bank_app.dto.auth.RegisterRequest;
 import com.example.bank_app.model.Role;
 import com.example.bank_app.model.User;
+import com.example.bank_app.repository.LoginAttemptRepository;
 import com.example.bank_app.repository.RoleRepository;
 import com.example.bank_app.repository.UserRepository;
 import com.example.bank_app.service.AccountService;
+import com.example.bank_app.service.LoginAttemptService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +39,7 @@ class AuthServiceImplTest {
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private JwtService jwtService;
     @Mock private AuthenticationManager authenticationManager;
+    @Mock private LoginAttemptService loginAttemptService;
 
     @InjectMocks private AuthServiceImpl authService;
 
@@ -90,6 +93,10 @@ class AuthServiceImplTest {
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Bad credentials"));
+        when(userRepository.findByEmail(request.email()))
+                .thenReturn(Optional.of(user));
+        when(loginAttemptService.getBlockStatus(user))
+                .thenReturn(false);
 
         // When & Then
         assertThatThrownBy(() -> authService.login(request))

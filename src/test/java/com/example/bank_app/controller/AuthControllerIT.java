@@ -3,14 +3,8 @@ package com.example.bank_app.controller;
 import com.example.bank_app.AbstractIntegrationTest;
 import com.example.bank_app.dto.auth.LoginRequest;
 import com.example.bank_app.dto.auth.RegisterRequest;
-import com.example.bank_app.model.AccountType;
-import com.example.bank_app.model.Currency;
-import com.example.bank_app.model.Role;
-import com.example.bank_app.model.User;
-import com.example.bank_app.repository.AccountTypeRepository;
-import com.example.bank_app.repository.CurrencyRepository;
-import com.example.bank_app.repository.RoleRepository;
-import com.example.bank_app.repository.UserRepository;
+import com.example.bank_app.model.*;
+import com.example.bank_app.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +29,7 @@ class AuthControllerIT extends AbstractIntegrationTest {
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private CurrencyRepository currencyRepository;
     @Autowired private AccountTypeRepository accountTypeRepository;
+    @Autowired private LoginAttemptRepository loginAttemptRepository;
 
     private Role clientRole;
 
@@ -43,6 +38,7 @@ class AuthControllerIT extends AbstractIntegrationTest {
         // Limpiamos la BD para evitar conflictos de Unique Key (email/documentId)
         userRepository.deleteAll();
         roleRepository.deleteAll();
+        loginAttemptRepository.deleteAll();
 
         clientRole = roleRepository.save(Role.builder()
                 .id(1)
@@ -60,7 +56,7 @@ class AuthControllerIT extends AbstractIntegrationTest {
                 .name("CORRIENTE")
                 .build());
 
-        userRepository.save(User.builder()
+        User saved = userRepository.save(User.builder()
                 .role(clientRole)
                 .name("Existing")
                 .lastName1("User")
@@ -69,6 +65,10 @@ class AuthControllerIT extends AbstractIntegrationTest {
                 .password(passwordEncoder.encode("password123"))
                 .phoneNumber("999999999")
                 .isActive(true)
+                .build());
+
+        loginAttemptRepository.save(LoginAttempt.builder()
+                .user(saved)
                 .build());
     }
 
