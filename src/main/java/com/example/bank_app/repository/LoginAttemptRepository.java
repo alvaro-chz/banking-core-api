@@ -13,4 +13,5 @@ public interface LoginAttemptRepository extends JpaRepository<LoginAttempt, Long
     Optional<LoginAttempt> findByUserIdAndIsBlockedTrue(Long userId);
     @Query("SELECT la FROM LoginAttempt la JOIN FETCH la.user WHERE la.isBlocked = true ORDER BY la.lastAttempt DESC")
     List<LoginAttempt> findLastBlockedUsers(Pageable pageable);
+    Optional<LoginAttempt> findByUserId(Long userId);
 }

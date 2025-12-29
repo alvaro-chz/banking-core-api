@@ -11,9 +11,12 @@ import com.example.bank_app.repository.RoleRepository;
 import com.example.bank_app.repository.UserRepository;
 import com.example.bank_app.service.AccountService;
 import com.example.bank_app.service.AuthService;
+import com.example.bank_app.service.LoginAttemptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,24 +32,34 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final LoginAttemptService loginAttemptService;
 
     @Override
-    @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        String jwtToken = jwtService.generateToken(user);
+        if (loginAttemptService.getBlockStatus(user)) {
+            throw new LockedException("Tu cuenta ha sido bloqueada temporalmente");
+        }
 
-        return new AuthResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole().getName(),
-                jwtToken
-        );
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+            loginAttemptService.loginSucceeded(user);
+            String jwtToken = jwtService.generateToken(user);
+
+            return new AuthResponse(
+                    user.getId(),
+                    user.getName(),
+                    user.getEmail(),
+                    user.getRole().getName(),
+                    jwtToken
+            );
+
+        } catch (AuthenticationException e) {
+            loginAttemptService.loginFailed(user);
+            throw e;
+        }
     }
 
     @Override
@@ -74,6 +87,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         User saved = userRepository.save(user);
+        loginAttemptService.createLoginAttempt(user);
 
         accountService.createAccount(new AccountCreationRequest(
                 "PEN",
