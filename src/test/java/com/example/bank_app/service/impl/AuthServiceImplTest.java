@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -101,6 +102,26 @@ class AuthServiceImplTest {
         // When & Then
         assertThatThrownBy(() -> authService.login(request))
                 .isInstanceOf(BadCredentialsException.class);
+        verify(jwtService, never()).generateToken(any());
+    }
+
+    @Test
+    void login_BlockedAccount() {
+        // Given
+        LoginRequest request = new LoginRequest(
+                "test@mail.com",
+                "password123"
+        );
+
+        when(userRepository.findByEmail(request.email()))
+                .thenReturn(Optional.of(user));
+        when(loginAttemptService.getBlockStatus(user))
+                .thenReturn(true);
+
+        // When & Then
+        assertThatThrownBy(() -> authService.login(request))
+                .isInstanceOf(LockedException.class)
+                .hasMessage("Tu cuenta ha sido bloqueada temporalmente");
         verify(jwtService, never()).generateToken(any());
     }
 
