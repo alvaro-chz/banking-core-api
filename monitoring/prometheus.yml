@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 5s # Leer métricas cada 5 segundos
+
+scrape_configs:
+  - job_name: 'bank-app-backend'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['bank-app-backend:8080']
