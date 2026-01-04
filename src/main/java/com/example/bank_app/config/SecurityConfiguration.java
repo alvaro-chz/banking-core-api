@@ -21,7 +21,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                                        .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                        .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/actuator/**").permitAll()
                                         .requestMatchers("/api/v1/beneficiaries/**").hasRole("CLIENT")
                                         .requestMatchers("/api/v1/transactions/**", "/api/v1/accounts/**", "/api/v1/users/**").hasAnyRole("ADMIN", "CLIENT")
                                         .requestMatchers("/actuator/**", "/api/v1/admin/**").hasRole("ADMIN")
