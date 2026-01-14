@@ -34,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
                 .stream()
                 .map(bankAccount -> new AccountResponse(
                         bankAccount.getId(),
-                        bankAccount.getCurrency().getName(),
+                        bankAccount.getCurrency().getCode(),
                         bankAccount.getCurrentBalance(),
                         bankAccount.getAccountType().getName(),
                         bankAccount.getAccountNumber()
