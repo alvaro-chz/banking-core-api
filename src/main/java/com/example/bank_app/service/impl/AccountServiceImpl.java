@@ -68,7 +68,7 @@ public class AccountServiceImpl implements AccountService {
 
         return new AccountResponse(
                 saved.getId(),
-                saved.getCurrency().getName(),
+                saved.getCurrency().getCode(),
                 saved.getCurrentBalance(),
                 saved.getAccountType().getName(),
                 saved.getAccountNumber()
