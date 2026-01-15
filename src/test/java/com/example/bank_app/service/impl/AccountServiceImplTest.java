@@ -76,7 +76,7 @@ class AccountServiceImplTest {
         AccountResponse response = result.get(0);
         assertThat(result).hasSize(1);
         assertThat(response.accountNumber()).isEqualTo("12345678901234");
-        assertThat(response.currency()).isEqualTo("Soles");
+        assertThat(response.currency()).isEqualTo("PEN");
         assertThat(response.accountType()).isEqualTo("AHORROS");
     }
 
@@ -112,7 +112,7 @@ class AccountServiceImplTest {
 
         // Then
         assertThat(response.id()).isEqualTo(200L);
-        assertThat(response.currency()).isEqualTo("Soles");
+        assertThat(response.currency()).isEqualTo("PEN");
         verify(userRepository).findById(userId);
         verify(bankAccountRepository).save(any(BankAccount.class));
     }

@@ -34,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
                 .stream()
                 .map(bankAccount -> new AccountResponse(
                         bankAccount.getId(),
-                        bankAccount.getCurrency().getName(),
+                        bankAccount.getCurrency().getCode(),
                         bankAccount.getCurrentBalance(),
                         bankAccount.getAccountType().getName(),
                         bankAccount.getAccountNumber()
@@ -68,7 +68,7 @@ public class AccountServiceImpl implements AccountService {
 
         return new AccountResponse(
                 saved.getId(),
-                saved.getCurrency().getName(),
+                saved.getCurrency().getCode(),
                 saved.getCurrentBalance(),
                 saved.getAccountType().getName(),
                 saved.getAccountNumber()
