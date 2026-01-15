@@ -8,6 +8,7 @@ import java.util.Map;
 
 public record AdminDashboardResponse(
         Long retainedUsersCount,
+        Long totalUsers,
         Long totalBlockedUsersCount,
         List<BlockedUserSummary> lastUsersBlocked,
         Map<String, List<ChartDataPoint>> transactionCurve

@@ -14,6 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
     boolean existsByDocumentId(String documentId);
+    Long countByRole_Name(String roleName);
 
     @Query("""
         SELECT new com.example.bank_app.dto.admin.UserAdminResponse(
