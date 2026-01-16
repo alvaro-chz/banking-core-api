@@ -5,6 +5,7 @@ import com.example.bank_app.model.LoginAttempt;
 import com.example.bank_app.model.User;
 import com.example.bank_app.repository.BankTransactionRepository;
 import com.example.bank_app.repository.LoginAttemptRepository;
+import com.example.bank_app.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +27,7 @@ class AdminServiceImplTest {
 
     @Mock private BankTransactionRepository bankTransactionRepository;
     @Mock private LoginAttemptRepository loginAttemptRepository;
+    @Mock private UserRepository userRepository;
 
     @InjectMocks private AdminServiceImpl adminService;
 
@@ -35,6 +37,7 @@ class AdminServiceImplTest {
 
         when(bankTransactionRepository.getRetainedUsers()).thenReturn(150L);
         when(loginAttemptRepository.countByIsBlockedTrue()).thenReturn(5L);
+        when(userRepository.countByRole_Name("CLIENT")).thenReturn(2L);
 
         User user1 = User.builder().documentId("123").name("Juan").lastName1("Perez").build();
         User user2 = User.builder().documentId("456").name("Maria").lastName1("Gomez").build();
@@ -71,6 +74,7 @@ class AdminServiceImplTest {
 
         assertThat(response.retainedUsersCount()).isEqualTo(150L);
         assertThat(response.totalBlockedUsersCount()).isEqualTo(5L);
+        assertThat(response.totalUsers()).isEqualTo(2L);
 
         // Validar lista de bloqueados (Mapping correcto de nombre y apellido)
         assertThat(response.lastUsersBlocked()).hasSize(2);
@@ -103,6 +107,7 @@ class AdminServiceImplTest {
 
         when(loginAttemptRepository.findLastBlockedUsers(any())).thenReturn(Collections.emptyList());
         when(bankTransactionRepository.getTransactionCurveDataGroupedByCurrency()).thenReturn(Collections.emptyList());
+        when(userRepository.countByRole_Name("CLIENT")).thenReturn(0L);
 
         // --- WHEN ---
         AdminDashboardResponse response = adminService.getDashboard();
@@ -112,5 +117,6 @@ class AdminServiceImplTest {
         assertThat(response.totalBlockedUsersCount()).isZero();
         assertThat(response.lastUsersBlocked()).isEmpty();
         assertThat(response.transactionCurve()).isEmpty();
+        assertThat(response.totalUsers()).isZero();
     }
 }
