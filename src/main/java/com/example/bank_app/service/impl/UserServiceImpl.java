@@ -75,7 +75,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Page<UserAdminResponse> getUsers(String term, Boolean isActive, Boolean isBlocked, Pageable pageable) {
-        return userRepository.findUsersByFilter(term, isActive, isBlocked, pageable);
+        String searchPattern = null;
+        if (term != null && !term.isBlank()) {
+            searchPattern = "%" + term.trim().toLowerCase() + "%";
+        }
+
+        return userRepository.findUsersByFilter(searchPattern, isActive, isBlocked, pageable);
     }
 
     private UserResponse mapToUserResponse(User user) {

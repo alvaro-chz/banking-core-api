@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -279,13 +278,13 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Page<TransactionResponse> getAllTransactions(
-            Long accountId,
+            String accountNumber,
             String status,
             LocalDateTime startDate,
             LocalDateTime endDate,
             Pageable pageable
     ) {
-        return bankTransactionRepository.findAllByFilter(accountId, status, startDate, endDate, pageable)
+        return bankTransactionRepository.findAllByFilter(accountNumber, status, startDate, endDate, pageable)
                 .map(this::mapToTransactionResponse);
     }
 

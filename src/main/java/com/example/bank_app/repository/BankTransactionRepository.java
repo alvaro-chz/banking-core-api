@@ -52,13 +52,15 @@ public interface BankTransactionRepository extends JpaRepository <BankTransactio
 
     @Query("""
         SELECT t FROM BankTransaction t
-        WHERE (:accountId IS NULL OR t.sourceAccount.id = :accountId OR t.targetAccount.id = :accountId)
-        AND (:status IS NULL OR t.transactionStatus.name = :status)
+        LEFT JOIN t.sourceAccount s
+        LEFT JOIN t.targetAccount ta
+        WHERE (:accountNumber IS NULL OR s.accountNumber = :accountNumber OR ta.accountNumber = :accountNumber)
+        AND (:status IS NULL OR t.transactionStatus = :status)
         AND (CAST(:minDate AS timestamp) IS NULL OR t.createdAt >= :minDate)
         AND (CAST(:maxDate AS timestamp) IS NULL OR t.createdAt <= :maxDate)
     """)
     Page<BankTransaction> findAllByFilter(
-            @Param("accountId") Long accountId,
+            @Param("accountNumber") String accountNumber,
             @Param("status") String status,
             @Param("minDate") LocalDateTime minDate,
             @Param("maxDate") LocalDateTime maxDate,

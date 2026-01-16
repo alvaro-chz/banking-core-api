@@ -4,6 +4,7 @@ import com.example.bank_app.dto.admin.AdminDashboardResponse;
 import com.example.bank_app.model.LoginAttempt;
 import com.example.bank_app.repository.BankTransactionRepository;
 import com.example.bank_app.repository.LoginAttemptRepository;
+import com.example.bank_app.repository.UserRepository;
 import com.example.bank_app.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -21,11 +22,13 @@ import java.util.stream.Collectors;
 public class AdminServiceImpl implements AdminService {
     private final BankTransactionRepository bankTransactionRepository;
     private final LoginAttemptRepository loginAttemptRepository;
+    private final UserRepository userRepository;
 
     @Override
     public AdminDashboardResponse getDashboard() {
         Long retainedUsers = bankTransactionRepository.getRetainedUsers();
         Long totalBlocked = loginAttemptRepository.countByIsBlockedTrue();
+        Long totalUsers = userRepository.countByRole_Name("CLIENT");
 
         List<LoginAttempt> blockedAttempts = loginAttemptRepository.findLastBlockedUsers(PageRequest.of(0, 3));
         List<AdminDashboardResponse.BlockedUserSummary> blockedUsers = blockedAttempts.stream()
@@ -52,6 +55,7 @@ public class AdminServiceImpl implements AdminService {
 
         return new AdminDashboardResponse(
                 retainedUsers != null ? retainedUsers : 0L,
+                totalUsers,
                 totalBlocked,
                 blockedUsers,
                 curveMap
