@@ -24,7 +24,7 @@ public interface TransactionService {
     );
 
     Page<TransactionResponse> getAllTransactions(
-            Long accountId,
+            String accountId,
             String status,
             LocalDateTime startDate,
             LocalDateTime endDate,

@@ -22,15 +22,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
              CONCAT(u.name, ' ', u.lastName1),
              u.documentId,
              u.email,
-             COALESCE(la.isBlocked, false)
+             u.phoneNumber,
+             COALESCE(la.isBlocked, false),
+             u.createdAt
          )
          FROM User u
          LEFT JOIN LoginAttempt la ON la.user = u
          WHERE (:term IS NULL OR (
-             LOWER(u.name) LIKE LOWER(CONCAT('%', :term, '%')) OR
-             LOWER(u.lastName1) LIKE LOWER(CONCAT('%', :term, '%')) OR
-             LOWER(u.email) LIKE LOWER(CONCAT('%', :term, '%')) OR
-             u.documentId LIKE CONCAT('%', :term, '%')
+             LOWER(u.name) LIKE :term OR
+             LOWER(u.lastName1) LIKE :term OR
+             LOWER(u.email) LIKE :term OR
+             u.documentId LIKE :term
          ))
          AND (:isActive IS NULL OR u.isActive = :isActive)
          AND (:isBlocked IS NULL OR COALESCE(la.isBlocked, false) = :isBlocked)

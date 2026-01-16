@@ -39,7 +39,7 @@ public class AdminController {
 
     @GetMapping("/transactions")
     public ResponseEntity<Page<TransactionResponse>> getAllTransactions(
-            @RequestParam(required = false) Long accountId,
+            @RequestParam(required = false) String accountNumber,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
@@ -48,12 +48,12 @@ public class AdminController {
             HttpServletRequest request,
             Authentication auth
     ) {
-        if (accountId != null) {
+        if (accountNumber != null && !accountNumber.isBlank()) {
             User admin = (User) auth.getPrincipal();
             auditLogService.logAction(
                     admin.getId(),
                     AuditAction.SEARCH_TRANSACTIONS,
-                    "Admin buscó transacciones de la cuenta ID: " + accountId,
+                    "Admin buscó transacciones de la cuenta N°: " + accountNumber,
                     WebUtils.getClientIp(request),
                     WebUtils.getUserAgent(request)
             );
@@ -64,7 +64,7 @@ public class AdminController {
         LocalDateTime endDateTime = (toDate != null) ? toDate.atTime(LocalTime.MAX) : null;
 
         return ResponseEntity.ok(transactionService.getAllTransactions(
-                accountId,
+                accountNumber,
                 status,
                 startDateTime,
                 endDateTime,
