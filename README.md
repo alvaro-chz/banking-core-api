@@ -94,20 +94,20 @@ You can now test the protected endpoints (`/transactions`, `/accounts`, etc.).
 ### 👥 Test Users
 The database is initialized with ready-to-use accounts. All accounts share the same password: `password123`
 
-| Rol | Correo / Usuario | Saldo Inicial | Notas                               |
-| :--- | :--- |:--------------|:------------------------------------|
-| **Admin** | `admin@banco.com` | N/A           | Access to administrative endpoints. |
-| **Cliente 1** | `juan@correo.com` | 5,000 PEN     | Account: `123456789`                |
-| **Cliente 2** | `maria@correo.com` | 1,000 PEN     | Account: `111222333`                |
+| Role         | Email / Username   | Initial Balance | Notes                               |
+|:-------------|:-------------------|:----------------|:------------------------------------|
+| **Admin**    | `admin@banco.com`  | N/A             | Access to administrative endpoints. |
+| **Client 1** | `juan@correo.com`  | 5,000 PEN       | Account: `123456789`                |
+| **Client 2** | `maria@correo.com` | 1,000 PEN       | Account: `111222333`                |
 
 ---
 ## 📊 Observability & Monitoring (WIP)
 
 The project includes real-time monitoring tools, accessible locally:
 
-| Herramienta | Función | Acceso                                         | Credenciales |
-| :--- | :--- |:-----------------------------------------------| :--- |
-| **Grafana** | Visual Dashboards | [http://localhost:3000](http://localhost:3000) | `admin` / `admin` |
-| **Prometheus** | Server Metrics | [http://localhost:9090](http://localhost:9090) | N/A |
-| **Loki** | Centralized Logs | Port `3100` (internal)                         | N/A |
+| Tool           | Function          | Access                                         | Credentials       |
+|:---------------|:------------------|:-----------------------------------------------|:------------------|
+| **Grafana**    | Visual Dashboards | [http://localhost:3000](http://localhost:3000) | `admin` / `admin` |
+| **Prometheus** | Server Metrics    | [http://localhost:9090](http://localhost:9090) | N/A               |
+| **Loki**       | Centralized Logs  | Port `3100` (internal)                         | N/A               |
 
