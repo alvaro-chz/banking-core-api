@@ -1,41 +1,41 @@
 # 🏦 Cloud-Native Banking Core API
 
-API RESTful que simula las operaciones de un sistema bancario. Implementa una arquitectura robusta orientada a la observabilidad, seguridad stateless (JWT), y despliegue contenerizado.
+A RESTful API that simulates the operations of a core banking system. It implements a robust architecture focused on observability, stateless security (JWT), and containerized deployment.
 
-Este proyecto gestiona la lógica central de transacciones, cuentas de ahorro/corrientes, beneficiarios y un registro de auditoría completo para cada acción realizada.
-
----
-
-## 🚀 Tecnologías y Arquitectura
-
-* **Backend:** Java, Spring Boot 3, Spring Security (Filtros JWT), Spring Data JPA.
-* **Base de Datos:** PostgreSQL 16 (Relacional, con scripts de inicialización automáticos).
-* **Integraciones:** OpenExchangeRates API (para conversión de divisas).
-* **Infraestructura & DevOps:** Docker, Docker Compose.
-* **Observabilidad (WIP, Stack PLG):** Prometheus (Métricas), Grafana (Dashboards), Loki (Agregación de Logs).
+This project manages the core logic of transactions, savings/checking accounts, beneficiaries, and a comprehensive audit log for every action performed.
 
 ---
 
-## ⚙️ Estructura de la Base de Datos
-La persistencia está completamente modelada para cumplir con normativas de seguimiento financiero. Incluye:
-* **Entidades Core:** `user`, `bank_account`, `bank_transaction`, `beneficiary`.
-* **Seguridad y Control:** `role` (ADMIN/CLIENT), `login_attempt` (prevención de fuerza bruta), `audit_log` (trazabilidad de IP y acciones).
-* **Catálogos:** `currency` (USD, PEN, MXN), `transaction_type` y `transaction_status`.
+## 🚀 Technologies & Architecture
+
+* **Backend:** Java, Spring Boot 3, Spring Security (JWT Filters), Spring Data JPA.
+* **Database:** PostgreSQL 16 (Relational, with automatic initialization scripts).
+* **Integrations:** OpenExchangeRates API (for currency conversion).
+* **Infrastructure & DevOps:** Docker, Docker Compose.
+* **Observability (WIP, PLG Stack):** Prometheus (Metrics), Grafana (Dashboards), Loki (Log Aggregation).
 
 ---
 
-## 🛠️ Instalación y Ejecución Local
+## ⚙️ Database Structure
+The persistence layer is fully modeled to comply with financial tracking regulations. It includes:
+* **Core Entities:** `user`, `bank_account`, `bank_transaction`, `beneficiary`.
+* **Security & Control:** `role` (ADMIN/CLIENT), `login_attempt` (brute-force prevention), `audit_log` (IP and action traceability).
+* **Catalogs:** `currency` (USD, PEN, MXN), `account_type`, `transaction_type`, and `transaction_status`.
 
-El proyecto está dockerizado para garantizar un entorno reproducible sin necesidad de instalar Java o PostgreSQL localmente.
+---
 
-### 1. Clonar el repositorio
+## 🛠️ Local Setup & Execution
+
+The project is fully dockerized to ensure a reproducible environment without the need to install Java or PostgreSQL locally.
+
+### 1. Clone the repository
 ```bash
 git clone https://github.com/alvaro-chz/banking-core-api
 cd banking-core-api
 ```
 
-### 2. Configurar Variables de Envorno
-Crea un archivo llamado `.env` en la raíz del proyecto y añade la siguiente configuración base:
+### 2. Configure Environment Variables
+Create a file named .env in the root directory and add the following base configuration:
 
 ```env
 # Database Configuration
@@ -43,73 +43,71 @@ DB_USER=admin
 DB_PASSWORD=admin123
 DB_NAME=bank_db
 
-# Spring Security JWT (Ejemplo)
+# Spring Security JWT
 JWT_SECRET=e9912deb1f53a44779bad0feb4e8d0ba33d61bd75324c801a2087c43afef3eff
 
 # External API (Exchange Rates)
 EXCHANGE_API_URL=https://openexchangerates.org/api
-EXCHANGE_API_KEY=[key_de_la_api]
+EXCHANGE_API_KEY=[your_api_key_here]
 ```
 
-### 3. Levantar la Infraestructura (Opciones de ejecución)
+### 3. Spin up the Infrastructure (Execution Options)
+**Option A: Database Only (Recommended for Local Development)**
 
-**Opción A: Solo Base de Datos (Recomendado para Desarrollo Local)**
-
-Levanta únicamente el contenedor de PostgreSQL. Ideal si deseas ejecutar la aplicación de Spring Boot directamente desde tu IDE (IntelliJ/VS Code) para hacer depuración.
+Spins up only the PostgreSQL container. Ideal if you want to run the Spring Boot application directly from your IDE (IntelliJ/VS Code) for debugging.
 ```bash
 docker compose up -d bank_app_db
 ```
-**Opción B: App + Base de Datos**
+**Opción B: App + Database**
 
-Levanta la base de datos y construye la imagen de la aplicación backend. No inicia las herramientas de monitoreo.
+Spins up the database and builds the backend application image. Does not start the monitoring tools.
 ```bash
 docker compose up -d bank_app_db app
 ```
-**Opción C: Stack Completo con Monitoreo**
+**Opción C: Full Stack with Monitoring (High RAM Usage)**
 
-Levanta toda la infraestructura, incluyendo la aplicación, la base de datos y el stack PLG (Prometheus, Grafana, Loki). No se recomienda si quieres evitar un alto consumo de RAM.
+Spins up the entire infrastructure, including the app, the database, and the PLG stack (Prometheus, Grafana, Loki).
 ```bash
 docker compose up -d --build
 ```
 
 ---
-## 🧪 Cómo probar la API (Swagger UI)
+## 🧪 How to test the API (Swagger UI)
 
-La API cuenta con documentación interactiva (**OpenAPI/Swagger**). Una vez que los contenedores estén corriendo, sigue estos pasos:
+The API features interactive documentation (OpenAPI/Swagger). Once the containers are running, follow these steps:
 
-1.  **Ingresa a la documentación interactiva:**
+1.  **Access the interactive documentation:**
     [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-2.  **Autenticación:**
-    Como las rutas están protegidas mediante **Spring Security**, primero debes registrar un usuario o iniciar sesión en el endpoint público `/api/v1/auth/login`.
+2.  **Authentication:**
+    Since the endpoints are protected via Spring Security, you must first register a user or log in using the public endpoint `/api/v1/auth/login`.
 
-3.  **Obtener Token:**
-    Copia el `token` devuelto en la respuesta.
+3.  **Get the Token:**
+    Copy the `token` returned in the response body.
 
-4.  **Autorizar:**
-    Haz clic en el botón verde **"Authorize"** en la parte superior de Swagger, pega el token y haz clic en **Apply**.
+4.  **Authorize:**
+    Click the green **"Authorize"** button at the top of the Swagger UI, paste your token, and click **Apply**.
 
-Con ello ya puedes probar los endpoints protegidos (`/transactions`, `/accounts`, etc.).
-
----
-### 👥 Usuarios de Prueba
-
-La base de datos se inicializa con cuentas listas para usar. Todos comparten la contraseña: `password123`
-
-| Rol | Correo / Usuario | Saldo Inicial | Notas                               |
-| :--- | :--- |:--------------|:------------------------------------|
-| **Admin** | `admin@banco.com` | N/A           | Acceso a endpoints administrativos. |
-| **Cliente 1** | `juan@correo.com` | 5,000 PEN     | Cuenta: `123456789`                 |
-| **Cliente 2** | `maria@correo.com` | 1,000 PEN     | Cuenta: `111222333`                 |
+You can now test the protected endpoints (`/transactions`, `/accounts`, etc.).
 
 ---
-## 📊 Observabilidad y Monitoreo (WIP)
+### 👥 Test Users
+The database is initialized with ready-to-use accounts. All accounts share the same password: `password123`
 
-El proyecto incluye herramientas de monitoreo en tiempo real, accesibles localmente:
+| Role         | Email / Username   | Initial Balance | Notes                               |
+|:-------------|:-------------------|:----------------|:------------------------------------|
+| **Admin**    | `admin@banco.com`  | N/A             | Access to administrative endpoints. |
+| **Client 1** | `juan@correo.com`  | 5,000 PEN       | Account: `123456789`                |
+| **Client 2** | `maria@correo.com` | 1,000 PEN       | Account: `111222333`                |
 
-| Herramienta | Función | Acceso | Credenciales |
-| :--- | :--- | :--- | :--- |
-| **Grafana** | Dashboards Visuales | [http://localhost:3000](http://localhost:3000) | `admin` / `admin` |
-| **Prometheus** | Métricas del Servidor | [http://localhost:9090](http://localhost:9090) | N/A |
-| **Loki** | Logs Centralizados | Puerto `3100` (interno) | N/A |
+---
+## 📊 Observability & Monitoring (WIP)
+
+The project includes real-time monitoring tools, accessible locally:
+
+| Tool           | Function          | Access                                         | Credentials       |
+|:---------------|:------------------|:-----------------------------------------------|:------------------|
+| **Grafana**    | Visual Dashboards | [http://localhost:3000](http://localhost:3000) | `admin` / `admin` |
+| **Prometheus** | Server Metrics    | [http://localhost:9090](http://localhost:9090) | N/A               |
+| **Loki**       | Centralized Logs  | Port `3100` (internal)                         | N/A               |
 

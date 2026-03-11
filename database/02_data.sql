@@ -24,11 +24,10 @@ INSERT INTO transaction_type (id, name) VALUES (4, 'PAGO_SERVICIO');
 INSERT INTO transaction_type (id, name) VALUES (5, 'PAGO_INTERESES');
 
 -- ==========================================
--- USUARIOS DE PRUEBA
--- La contraseña para todos es: password123
+-- Test users
 -- ==========================================
 
--- 1. USUARIO ADMIN
+-- 1. ADMIN USER
 INSERT INTO "user" (id, role_id, name, last_name1, last_name2, document_id, email, password, phone_number)
 VALUES (
            1,
@@ -43,7 +42,7 @@ INSERT INTO login_attempt (id, user_id) VALUES (1, 1);
 INSERT INTO bank_account (id, user_id, account_type_id, account_number, currency_id, current_balance)
 VALUES (1, 1, 2, '001-0000000001', 2, 10000.0000);
 
--- 2. CLIENTE 1
+-- 2. CLIENT 1
 INSERT INTO "user" (id, role_id, name, last_name1, last_name2, document_id, email, password, phone_number)
 VALUES (
            2,
@@ -58,7 +57,7 @@ INSERT INTO login_attempt (id, user_id) VALUES (2, 2);
 INSERT INTO bank_account (id, user_id, account_type_id, account_number, currency_id, current_balance)
 VALUES (2, 2, 2, '123456789', 2, 5000.0000);
 
--- 3. CLIENTE 2
+-- 3. CLIENT 2
 INSERT INTO "user" (id, role_id, name, last_name1, last_name2, document_id, email, password, phone_number)
 VALUES (
            3,
